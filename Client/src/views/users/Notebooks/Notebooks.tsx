@@ -104,8 +104,6 @@ export const Notebooks = () => {
     e.preventDefault();
     if (!editingNotebook || !editingNotebook.title.trim()) return;
     
-    // Close dialogs and context menu
-    const currentNotebookId = editingNotebook.id;
     setContextMenuOpen(null);
     setIsRenameDialogOpen(false);
     setEditingNotebook(null);
@@ -136,8 +134,6 @@ export const Notebooks = () => {
 
   const handleNotebookDelete = async () => {
     if (!deletingNotebookId) return;
-
-    // Close context menu immediately
     setContextMenuOpen(null);
     
     try {
@@ -181,7 +177,7 @@ export const Notebooks = () => {
                 open={isRenameDialogOpen && editingNotebook?.id === notebook._id}
                 onOpenChange={(open) => {
                   setIsRenameDialogOpen(open);
-                  setContextMenuOpen(null); // Ensure context menu is closed when dialog state changes
+                  setContextMenuOpen(null);
                   if (!open) {
                     setEditingNotebook(null);
                   } else if (editingNotebook?.id !== notebook._id) {
@@ -194,7 +190,6 @@ export const Notebooks = () => {
                       e.preventDefault();
                       setContextMenuOpen(null);
                       setEditingNotebook({ id: notebook._id, title: notebook.title });
-                      // Use setTimeout to ensure the dialog opens after the context menu is fully closed
                       setTimeout(() => setIsRenameDialogOpen(true), 0);
                     }}
                   >

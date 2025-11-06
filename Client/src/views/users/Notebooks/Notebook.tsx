@@ -599,11 +599,22 @@ const Notebook = () => {
                                     </div>
                                   </ContextMenuTrigger>
                                   <ContextMenuContent>
-                                    <ContextMenuItem>
+                                    <ContextMenuItem 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setEditingPage({ id: page._id, name: page.title });
+                                      }}
+                                    >
                                       <FiEdit className="mr-2 h-4 w-4" />
                                       Rename
                                     </ContextMenuItem>
-                                    <ContextMenuItem>
+                                    <ContextMenuItem 
+                                      className="text-red-500"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDeletingPage(page._id);
+                                      }}
+                                    >
                                       <FiTrash className="mr-2 h-4 w-4" />
                                       Delete
                                     </ContextMenuItem>
@@ -631,11 +642,22 @@ const Notebook = () => {
                           </div>
                         </ContextMenuTrigger>
                         <ContextMenuContent>
-                          <ContextMenuItem>
+                          <ContextMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingPage({ id: page._id, name: page.title });
+                            }}
+                          >
                             <FiEdit className="mr-2 h-4 w-4" />
                             Rename
                           </ContextMenuItem>
-                          <ContextMenuItem>
+                          <ContextMenuItem 
+                            className="text-red-500"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeletingPage(page._id);
+                            }}
+                          >
                             <FiTrash className="mr-2 h-4 w-4" />
                             Delete
                           </ContextMenuItem>
@@ -698,10 +720,9 @@ const Notebook = () => {
             notebook.sections
               .sort((a, b) => a.order - b.order)
               .map((section) => (
-                <ContextMenu>
-                  <ContextMenuTrigger>
-
-                    <div key={section._id} className="mb-4">
+                <div key={section._id} className="mb-4">
+                  <ContextMenu>
+                    <ContextMenuTrigger>
                       <div
                         className="flex items-center justify-between p-2 rounded-md hover:bg-accent cursor-pointer"
                         onClick={(e) => toggleSection(e, section._id)}
@@ -720,39 +741,71 @@ const Notebook = () => {
                         </div>
                         <span>*</span>
                       </div>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent>
+                      <ContextMenuItem 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingSection({ id: section._id, name: section.title });
+                        }}
+                      >
+                        <FiEdit className="mr-2 h-4 w-4" />
+                        Rename
+                      </ContextMenuItem>
+                      <ContextMenuItem 
+                        className="text-red-500"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingSection(section._id);
+                        }}
+                      >
+                        <FiTrash className="mr-2 h-4 w-4" />
+                        Delete
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
 
-                      {section.isExpanded && section.pages.length > 0 && (
-                        <div className="ml-6 space-y-1">
-                          {section.pages
-                            .sort((a, b) => a.order - b.order)
-                            .map((page) => (
+                  {section.isExpanded && section.pages.length > 0 && (
+                    <div className="ml-6 space-y-1">
+                      {section.pages
+                        .sort((a, b) => a.order - b.order)
+                        .map((page) => (
+                          <ContextMenu key={page._id}>
+                            <ContextMenuTrigger>
                               <div
-                                key={page._id}
-                                className={`flex items-center gap-2 p-2 rounded-md cursor-pointer ${activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50'
-                                  }`}
+                                className={`flex items-center gap-2 p-2 rounded-md cursor-pointer ${activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50'}`}
                                 onClick={(e) => handlePageClick(e, page._id)}
                               >
                                 <FiFile className="h-4 w-4 text-blue-500" />
                                 <span className="truncate">{page.title}</span>
                               </div>
-                            ))}
-                        </div>
-                      )}
+                            </ContextMenuTrigger>
+                            <ContextMenuContent>
+                              <ContextMenuItem 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingPage({ id: page._id, name: page.title });
+                                }}
+                              >
+                                <FiEdit className="mr-2 h-4 w-4" />
+                                Rename
+                              </ContextMenuItem>
+                              <ContextMenuItem 
+                                className="text-red-500"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeletingPage(page._id);
+                                }}
+                              >
+                                <FiTrash className="mr-2 h-4 w-4" />
+                                Delete
+                              </ContextMenuItem>
+                            </ContextMenuContent>
+                          </ContextMenu>
+                        ))}
                     </div>
-                  </ContextMenuTrigger>
-                  <ContextMenuContent>
-                    <ContextMenuItem>
-                      {/* Rename  */}
-                      <FiEdit className="mr-2 h-4 w-4" />
-                      Rename
-                    </ContextMenuItem>
-                    <ContextMenuItem>
-                      {/* Delete  */}
-                      <FiTrash className="mr-2 h-4 w-4" />
-                      Delete
-                    </ContextMenuItem>
-                  </ContextMenuContent>
-                </ContextMenu>
+                  )}
+                </div>
               )))}
         </div>
       </div>
