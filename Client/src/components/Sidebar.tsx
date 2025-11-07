@@ -61,7 +61,7 @@ const Sidebar = ({ isOpen, onClose, user, handleLogout, isCollapsed = false }: S
               isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 px-2"
             )}
           >
-            NoteX One
+            Notux One
           </h1>
         </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FiPlus, FiChevronRight, FiChevronDown, FiFile, FiFolder, FiLoader, FiTrash, FiEdit } from 'react-icons/fi';
+import { FiPlus, FiChevronRight, FiChevronDown, FiFile, FiFolder, FiLoader, FiTrash, FiEdit, FiChevronLeft } from 'react-icons/fi';
 import { apiService } from '../../../services/ApiService';
 import { Button } from "../../../components/ui/button";
 import {
@@ -27,6 +27,7 @@ import {
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { toast } from 'sonner';
+import { cn } from "../../../lib/utils";
 
 interface Page {
   _id: string;
@@ -72,6 +73,7 @@ const Notebook = () => {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [activePage, setActivePage] = useState<string>('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const [editingSection, setEditingSection] = useState<{ id: string, name: string } | null>(null);
   const [deletingSection, setDeletingSection] = useState<string | null>(null);
   const [editingPage, setEditingPage] = useState<{ id: string, name: string } | null>(null);
@@ -309,6 +311,10 @@ const Notebook = () => {
     setActivePage(prevId => prevId === pageId ? '' : pageId);
   };
 
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed(prev => !prev);
+  };
+
   useEffect(() => {
     if (notebookId) {
       fetchNotebook();
@@ -337,19 +343,49 @@ const Notebook = () => {
   return (
     <div className="flex h-[calc(100vh-64px)] bg-background">
       {/* Sidebar */}
-      <div className="w-64 border-r border-border bg-card overflow-y-auto shrink-0 flex flex-col">
-        <div className="p-4 border-b border-border">
-          <h2 className="text-lg font-semibold truncate">
-            {notebook?.title || 'Untitled Notebook'}
-          </h2>
+      <div
+        className={cn(
+          "relative border-r border-border bg-card shrink-0 flex flex-col transition-all duration-300 ease-in-out",
+          isSidebarCollapsed ? "w-16" : "w-64"
+        )}
+      >
+        <button
+          onClick={toggleSidebarCollapse}
+          className="absolute -right-3 top-16 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-primary/90 transition-colors"
+          aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {isSidebarCollapsed ? (
+            <FiChevronRight className="h-4 w-4" />
+          ) : (
+            <FiChevronLeft className="h-4 w-4" />
+          )}
+        </button>
+
+        <div className={cn("border-b border-border p-4", isSidebarCollapsed && "px-2 py-3")}
+        >
+          {isSidebarCollapsed ? (
+            <div className="flex items-center justify-center">
+              <FiFolder className="h-5 w-5 text-yellow-500" />
+            </div>
+          ) : (
+            <h2 className="text-lg font-semibold truncate">
+              {notebook?.title || 'Untitled Notebook'}
+            </h2>
+          )}
         </div>
 
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <div className='p-2'>
-              <Button variant="outline" className="w-full justify-start gap-2">
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start gap-2 transition-all",
+                  isSidebarCollapsed && "justify-center gap-0 px-2"
+                )}
+              >
                 <FiPlus className="h-4 w-4" />
-                <span>Add</span>
+                {!isSidebarCollapsed && <span>Add</span>}
               </Button>
             </div>
           </DropdownMenuTrigger>
@@ -464,72 +500,82 @@ const Notebook = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="flex-1 overflow-y-auto p-2">
-            <div className="space-y-2">
-              {(() => {
-                const items: CombinedItem[] = [];
+        <div
+          className={cn("flex-1 overflow-y-auto p-2", isSidebarCollapsed && "px-1")}
+        >
+          <div className="space-y-2">
+            {(() => {
+              const items: CombinedItem[] = [];
 
-                // Add direct pages
-                if (notebook?.directPages) {
-                  notebook.directPages.forEach(page => {
-                    items.push({
-                      ...page,
-                      type: 'page' as const,
-                      sectionId: undefined
-                    });
+              // Add direct pages
+              if (notebook?.directPages) {
+                notebook.directPages.forEach(page => {
+                  items.push({
+                    ...page,
+                    type: 'page' as const,
+                    sectionId: undefined
                   });
-                }
+                });
+              }
 
-                // Add sections and their pages
-                if (notebook?.sections) {
-                  notebook.sections.forEach(section => {
-                    // Add the section itself
-                    items.push({
-                      ...section,
-                      type: 'section' as const,
-                      pages: section.pages || []
-                    });
+              // Add sections and their pages
+              if (notebook?.sections) {
+                notebook.sections.forEach(section => {
+                  // Add the section itself
+                  items.push({
+                    ...section,
+                    type: 'section' as const,
+                    pages: section.pages || []
+                  });
 
-                    // Add section pages
-                    if (section.pages) {
-                      section.pages.forEach(page => {
-                        items.push({
-                          ...page,
-                          type: 'page' as const,
-                          sectionId: section._id
-                        });
+                  // Add section pages
+                  if (section.pages) {
+                    section.pages.forEach(page => {
+                      items.push({
+                        ...page,
+                        type: 'page' as const,
+                        sectionId: section._id
                       });
-                    }
-                  });
-                }
+                    });
+                  }
+                });
+              }
 
-                return items;
-              })()
-                .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-                .map((item) => {
-                  if (item.type === 'section') {
-                    const section = item as SectionItem;
-                    return (
-                      <div key={`section-${section._id}`} className="space-y-1">
-                        <ContextMenu>
+              return items;
+            })()
+              .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+              .map((item) => {
+                if (item.type === 'section') {
+                  const section = item as SectionItem;
+                  return (
+                    <div key={`section-${section._id}`} className="space-y-1">
+                      <ContextMenu>
                           <ContextMenuTrigger>
                             <div
-                              className="flex items-center justify-between p-2 rounded-md hover:bg-accent cursor-pointer"
+                              className={cn(
+                                "flex items-center p-2 rounded-md hover:bg-accent cursor-pointer gap-2",
+                                isSidebarCollapsed ? "justify-center" : "justify-between"
+                              )}
                               onClick={(e) => toggleSection(e, section._id)}
                             >
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground">
-                                  {section.pages?.length || 0}
-                                </span>
+                              <div className={cn("flex items-center gap-2", isSidebarCollapsed && "justify-center")}
+                              >
+                                {!isSidebarCollapsed && (
+                                  <span className="text-xs text-muted-foreground">
+                                    {section.pages?.length || 0}
+                                  </span>
+                                )}
                                 {section.isExpanded ? (
                                   <FiChevronDown className="h-4 w-4" />
                                 ) : (
                                   <FiChevronRight className="h-4 w-4" />
                                 )}
                                 <FiFolder className="h-4 w-4 text-yellow-500" />
-                                <span className="font-medium">{section.title}</span>
+                                {!isSidebarCollapsed && (
+                                  <span className="font-medium">{section.title}</span>
+                                )}
                               </div>
-                              <span>*</span>
+                              {!isSidebarCollapsed && <span>*</span>}
                             </div>
                           </ContextMenuTrigger>
                           <ContextMenuContent>
@@ -553,18 +599,24 @@ const Notebook = () => {
                           </ContextMenuContent>
                         </ContextMenu>
                         {section.isExpanded && section.pages && section.pages.length > 0 && (
-                          <div className="ml-8 space-y-1">
+                          <div
+                            className={cn("ml-8 space-y-1", isSidebarCollapsed && "ml-0")}
+                          >
                             {section.pages
                               .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
                               .map((page) => (
                                 <ContextMenu key={page._id}>
                                   <ContextMenuTrigger>
                                     <div
-                                      className={`flex items-center gap-2 p-2 pl-6 rounded-md cursor-pointer ${activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50'}`}
+                                      className={cn(
+                                        "flex items-center gap-2 p-2 pl-6 rounded-md cursor-pointer",
+                                        activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50',
+                                        isSidebarCollapsed && "pl-2 justify-center"
+                                      )}
                                       onClick={(e) => handlePageClick(e, page._id)}
                                     >
                                       <FiFile className="h-4 w-4 text-blue-500" />
-                                      <span className="truncate">{page.title}</span>
+                                      {!isSidebarCollapsed && <span className="truncate">{page.title}</span>}
                                     </div>
                                   </ContextMenuTrigger>
                                   <ContextMenuContent>
@@ -603,11 +655,15 @@ const Notebook = () => {
                       <ContextMenu key={`page-${page._id}`}>
                         <ContextMenuTrigger>
                           <div
-                            className={`flex items-center gap-2 p-2 ml-2 pl-4 rounded-md cursor-pointer ${activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50'}`}
+                            className={cn(
+                              "flex items-center gap-2 p-2 ml-2 pl-4 rounded-md cursor-pointer",
+                              activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50',
+                              isSidebarCollapsed && "ml-0 pl-0 justify-center"
+                            )}
                             onClick={(e) => handlePageClick(e, page._id)}
                           >
                             <FiFile className="h-4 w-4 text-blue-500" />
-                            <span className="truncate">{page.title}</span>
+                            {!isSidebarCollapsed && <span className="truncate">{page.title}</span>}
                           </div>
                         </ContextMenuTrigger>
                         <ContextMenuContent>
