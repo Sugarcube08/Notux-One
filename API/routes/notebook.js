@@ -3,6 +3,7 @@ const router = express.Router();
 const sectionController = require('../controllers/sectionController');
 const notebookController = require('../controllers/notebookController');
 const pageController = require('../controllers/pageController');
+const blockController = require('../controllers/blockController');
 
 router.post('/', notebookController.createNotebook);
 
@@ -25,5 +26,11 @@ router.post('/:notebookId/page', pageController.createPage);
 router.put('/:notebookId/page/:pageId', pageController.updatePage);
 
 router.delete('/:notebookId/page/:pageId', pageController.deletePage);
+
+router.post('/:notebookId/page/:pageId/block', blockController.createBlock);
+
+router.put('/:notebookId/page/:pageId/block/:blockId', blockController.updateBlock);
+
+router.delete('/:notebookId/page/:pageId/block/:blockId', blockController.deleteBlock);
 
 module.exports = router;

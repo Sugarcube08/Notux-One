@@ -28,6 +28,8 @@ import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { toast } from 'sonner';
 import { cn } from "../../../lib/utils";
+import Editor from "./Editor";
+
 
 interface Page {
   _id: string;
@@ -550,129 +552,39 @@ const Notebook = () => {
                   return (
                     <div key={`section-${section._id}`} className="space-y-1">
                       <ContextMenu>
-                          <ContextMenuTrigger>
-                            <div
-                              className={cn(
-                                "flex items-center p-2 rounded-md hover:bg-accent cursor-pointer gap-2",
-                                isSidebarCollapsed ? "justify-center" : "justify-between"
-                              )}
-                              onClick={(e) => toggleSection(e, section._id)}
-                            >
-                              <div className={cn("flex items-center gap-2", isSidebarCollapsed && "justify-center")}
-                              >
-                                {!isSidebarCollapsed && (
-                                  <span className="text-xs text-muted-foreground">
-                                    {section.pages?.length || 0}
-                                  </span>
-                                )}
-                                {section.isExpanded ? (
-                                  <FiChevronDown className="h-4 w-4" />
-                                ) : (
-                                  <FiChevronRight className="h-4 w-4" />
-                                )}
-                                <FiFolder className="h-4 w-4 text-yellow-500" />
-                                {!isSidebarCollapsed && (
-                                  <span className="font-medium">{section.title}</span>
-                                )}
-                              </div>
-                              {!isSidebarCollapsed && <span>*</span>}
-                            </div>
-                          </ContextMenuTrigger>
-                          <ContextMenuContent>
-                            <ContextMenuItem onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingSection({ id: section._id, name: section.title });
-                            }}>
-                              <FiEdit className="mr-2 h-4 w-4" />
-                              Rename
-                            </ContextMenuItem>
-                            <ContextMenuItem
-                              className="text-red-500"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setDeletingSection(section._id);
-                              }}
-                            >
-                              <FiTrash className="mr-2 h-4 w-4" />
-                              Delete
-                            </ContextMenuItem>
-                          </ContextMenuContent>
-                        </ContextMenu>
-                        {section.isExpanded && section.pages && section.pages.length > 0 && (
-                          <div
-                            className={cn("ml-8 space-y-1", isSidebarCollapsed && "ml-0")}
-                          >
-                            {section.pages
-                              .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-                              .map((page) => (
-                                <ContextMenu key={page._id}>
-                                  <ContextMenuTrigger>
-                                    <div
-                                      className={cn(
-                                        "flex items-center gap-2 p-2 pl-6 rounded-md cursor-pointer",
-                                        activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50',
-                                        isSidebarCollapsed && "pl-2 justify-center"
-                                      )}
-                                      onClick={(e) => handlePageClick(e, page._id)}
-                                    >
-                                      <FiFile className="h-4 w-4 text-blue-500" />
-                                      {!isSidebarCollapsed && <span className="truncate">{page.title}</span>}
-                                    </div>
-                                  </ContextMenuTrigger>
-                                  <ContextMenuContent>
-                                    <ContextMenuItem
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setEditingPage({ id: page._id, name: page.title });
-                                      }}
-                                    >
-                                      <FiEdit className="mr-2 h-4 w-4" />
-                                      Rename
-                                    </ContextMenuItem>
-                                    <ContextMenuItem
-                                      className="text-red-500"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setDeletingPage(page._id);
-                                      }}
-                                    >
-                                      <FiTrash className="mr-2 h-4 w-4" />
-                                      Delete
-                                    </ContextMenuItem>
-                                  </ContextMenuContent>
-                                </ContextMenu>
-                              ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  } else {
-                    const page = item as PageItem;
-                    if (page.sectionId) {
-                      return null;
-                    }
-                    return (
-                      <ContextMenu key={`page-${page._id}`}>
                         <ContextMenuTrigger>
                           <div
                             className={cn(
-                              "flex items-center gap-2 p-2 ml-2 pl-4 rounded-md cursor-pointer",
-                              activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50',
-                              isSidebarCollapsed && "ml-0 pl-0 justify-center"
+                              "flex items-center p-2 rounded-md hover:bg-accent cursor-pointer gap-2",
+                              isSidebarCollapsed ? "justify-center" : "justify-between"
                             )}
-                            onClick={(e) => handlePageClick(e, page._id)}
+                            onClick={(e) => toggleSection(e, section._id)}
                           >
-                            <FiFile className="h-4 w-4 text-blue-500" />
-                            {!isSidebarCollapsed && <span className="truncate">{page.title}</span>}
+                            <div className={cn("flex items-center gap-2", isSidebarCollapsed && "justify-center")}
+                            >
+                              {!isSidebarCollapsed && (
+                                <span className="text-xs text-muted-foreground">
+                                  {section.pages?.length || 0}
+                                </span>
+                              )}
+                              {section.isExpanded ? (
+                                <FiChevronDown className="h-4 w-4" />
+                              ) : (
+                                <FiChevronRight className="h-4 w-4" />
+                              )}
+                              <FiFolder className="h-4 w-4 text-yellow-500" />
+                              {!isSidebarCollapsed && (
+                                <span className="font-medium">{section.title}</span>
+                              )}
+                            </div>
+                            {!isSidebarCollapsed && <span>*</span>}
                           </div>
                         </ContextMenuTrigger>
                         <ContextMenuContent>
-                          <ContextMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingPage({ id: page._id, name: page.title });
-                            }}
-                          >
+                          <ContextMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingSection({ id: section._id, name: section.title });
+                          }}>
                             <FiEdit className="mr-2 h-4 w-4" />
                             Rename
                           </ContextMenuItem>
@@ -680,7 +592,7 @@ const Notebook = () => {
                             className="text-red-500"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setDeletingPage(page._id);
+                              setDeletingSection(section._id);
                             }}
                           >
                             <FiTrash className="mr-2 h-4 w-4" />
@@ -688,10 +600,100 @@ const Notebook = () => {
                           </ContextMenuItem>
                         </ContextMenuContent>
                       </ContextMenu>
-                    );
+                      {section.isExpanded && section.pages && section.pages.length > 0 && (
+                        <div
+                          className={cn("ml-8 space-y-1", isSidebarCollapsed && "ml-0")}
+                        >
+                          {section.pages
+                            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+                            .map((page) => (
+                              <ContextMenu key={page._id}>
+                                <ContextMenuTrigger>
+                                  <div
+                                    className={cn(
+                                      "flex items-center gap-2 p-2 pl-6 rounded-md cursor-pointer",
+                                      activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50',
+                                      isSidebarCollapsed && "pl-2 justify-center"
+                                    )}
+                                    onClick={(e) => handlePageClick(e, page._id)}
+                                  >
+                                    <FiFile className="h-4 w-4 text-blue-500" />
+                                    {!isSidebarCollapsed && <span className="truncate">{page.title}</span>}
+                                  </div>
+                                </ContextMenuTrigger>
+                                <ContextMenuContent>
+                                  <ContextMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingPage({ id: page._id, name: page.title });
+                                    }}
+                                  >
+                                    <FiEdit className="mr-2 h-4 w-4" />
+                                    Rename
+                                  </ContextMenuItem>
+                                  <ContextMenuItem
+                                    className="text-red-500"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeletingPage(page._id);
+                                    }}
+                                  >
+                                    <FiTrash className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </ContextMenuItem>
+                                </ContextMenuContent>
+                              </ContextMenu>
+                            ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                } else {
+                  const page = item as PageItem;
+                  if (page.sectionId) {
+                    return null;
                   }
-                })}
-            </div>
+                  return (
+                    <ContextMenu key={`page-${page._id}`}>
+                      <ContextMenuTrigger>
+                        <div
+                          className={cn(
+                            "flex items-center gap-2 p-2 ml-2 pl-4 rounded-md cursor-pointer",
+                            activePage === page._id ? 'bg-accent font-medium' : 'hover:bg-accent/50',
+                            isSidebarCollapsed && "ml-0 pl-0 justify-center"
+                          )}
+                          onClick={(e) => handlePageClick(e, page._id)}
+                        >
+                          <FiFile className="h-4 w-4 text-blue-500" />
+                          {!isSidebarCollapsed && <span className="truncate">{page.title}</span>}
+                        </div>
+                      </ContextMenuTrigger>
+                      <ContextMenuContent>
+                        <ContextMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingPage({ id: page._id, name: page.title });
+                          }}
+                        >
+                          <FiEdit className="mr-2 h-4 w-4" />
+                          Rename
+                        </ContextMenuItem>
+                        <ContextMenuItem
+                          className="text-red-500"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeletingPage(page._id);
+                          }}
+                        >
+                          <FiTrash className="mr-2 h-4 w-4" />
+                          Delete
+                        </ContextMenuItem>
+                      </ContextMenuContent>
+                    </ContextMenu>
+                  );
+                }
+              })}
+          </div>
         </div>
       </div>
 
@@ -822,8 +824,9 @@ const Notebook = () => {
       {/* Main Content */}
       <div className="flex-1 overflow-auto p-6">
         {activePage ? (
-          <div>Page content for {activePage} will be displayed here</div>
+          <Editor />
         ) : (
+
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-4">
             <p>Select a page to view or create a new one</p>
             <Button

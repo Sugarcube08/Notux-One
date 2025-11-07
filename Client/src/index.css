@@ -1,6 +1,7 @@
 /* === CUSTOM FONT === */
 
 @plugin "tailwindcss-animate";
+
 @font-face {
   font-family: 'Share Tech Mono';
   src: url('/fonts/ShareTechMono-Regular.woff2') format('woff2'),
@@ -12,7 +13,6 @@
 
 /* ===== TAILWIND IMPORT ===== */
 @import "tailwindcss";
-
 @custom-variant dark (&:is(.dark *));
 
 /* ===== BASE STYLES ===== */
@@ -35,18 +35,28 @@ body {
 }
 
 :root {
-  --color-bg-canvas: #f3f4f9;              /* Lighter base */
-  --color-bg-surface: #ffffff;             /* Crisp white */
-  --color-bg-muted: #e4e7f2;               /* Slightly darker for contrast */
-  --color-bg-layer: #faf7ff;               /* Subtle violet hue for warmth */
+  --color-bg-canvas: #f3f4f9;
+  /* Lighter base */
+  --color-bg-surface: #ffffff;
+  /* Crisp white */
+  --color-bg-muted: #e4e7f2;
+  /* Slightly darker for contrast */
+  --color-bg-layer: #faf7ff;
+  /* Subtle violet hue for warmth */
   --color-bg-glass: rgba(255, 255, 255, 0.78);
-  --color-border: #c9cfe2;                 /* More visible */
+  --color-border: #c9cfe2;
+  /* More visible */
   --color-border-strong: rgba(124, 58, 237, 0.28);
-  --color-text-primary: #0b1121;           /* Deeper black */
-  --color-text-secondary: #5b6273;         /* Slightly darker gray for legibility */
-  --color-primary: #7c3aed;                /* Vibrant purple */
-  --color-primary-strong: #5b21b6;         /* Deep purple */
-  --color-accent: #0284c7;                 /* Richer sky-blue accent */
+  --color-text-primary: #0b1121;
+  /* Deeper black */
+  --color-text-secondary: #5b6273;
+  /* Slightly darker gray for legibility */
+  --color-primary: #7c3aed;
+  /* Vibrant purple */
+  --color-primary-strong: #5b21b6;
+  /* Deep purple */
+  --color-accent: #0284c7;
+  /* Richer sky-blue accent */
   --shadow-elevated: 0 20px 50px -20px rgba(15, 23, 42, 0.28);
   --shadow-soft: 0 24px 60px -34px rgba(124, 58, 237, 0.4);
   --color-bg-gradient: linear-gradient(165deg, rgba(124, 58, 237, 0.1), rgba(14, 165, 233, 0.1));
@@ -85,18 +95,27 @@ body {
 }
 
 .dark {
-  --color-bg-canvas: #0a0f1e;              /* Deeper navy */
-  --color-bg-surface: #111b2f;             /* Slightly lighter than canvas */
-  --color-bg-muted: #1e293b;               /* Medium-dark for panels */
+  --color-bg-canvas: #0a0f1e;
+  /* Deeper navy */
+  --color-bg-surface: #111b2f;
+  /* Slightly lighter than canvas */
+  --color-bg-muted: #1e293b;
+  /* Medium-dark for panels */
   --color-bg-layer: rgba(15, 23, 42, 0.96);
   --color-bg-glass: rgba(15, 23, 42, 0.72);
-  --color-border: rgba(248, 250, 252, 0.12); /* Slightly more visible */
+  --color-border: rgba(248, 250, 252, 0.12);
+  /* Slightly more visible */
   --color-border-strong: rgba(168, 85, 247, 0.42);
-  --color-text-primary: #f9fafb;           /* Pure white text */
-  --color-text-secondary: #d1d5e3;         /* Softer light gray-blue */
-  --color-primary: #b97eff;                /* Brighter purple for dark bg */
-  --color-primary-strong: #c084fc;         /* Strong highlight purple */
-  --color-accent: #38bdf8;                 /* Cool accent for balance */
+  --color-text-primary: #f9fafb;
+  /* Pure white text */
+  --color-text-secondary: #d1d5e3;
+  /* Softer light gray-blue */
+  --color-primary: #b97eff;
+  /* Brighter purple for dark bg */
+  --color-primary-strong: #c084fc;
+  /* Strong highlight purple */
+  --color-accent: #38bdf8;
+  /* Cool accent for balance */
   --shadow-elevated: 0 28px 70px -30px rgba(8, 145, 178, 0.45);
   --shadow-soft: 0 32px 80px -36px rgba(56, 189, 248, 0.55);
   --color-bg-gradient: linear-gradient(165deg, rgba(168, 85, 247, 0.25), rgba(56, 189, 248, 0.18));
@@ -207,14 +226,17 @@ body {
     opacity: 0;
     transform: translateY(8px);
   }
+
   12% {
     opacity: 1;
     transform: translateY(0);
   }
+
   88% {
     opacity: 1;
     transform: translateY(0);
   }
+
   100% {
     opacity: 0;
     transform: translateY(-6px);
@@ -612,7 +634,17 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.ProseMirror {
+  outline: none;
+  height: 100%;
+}
+
+.ProseMirror p {
+  margin: 0.5rem 0;
 }
