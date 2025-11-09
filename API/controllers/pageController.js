@@ -2,10 +2,11 @@ const Notebook = require('../models/Notebooks');
 const Page = require('../models/Pages');
 const Section = require('../models/Sections');
 const responseService = require('../services/responseService');
+const { generateUniquePageTitle } = require('../services/pageTitleService');
 
 exports.createPage = async (req, res) => {
   try {
-    const { title, content, notebookID, sectionID } = req.body;
+    const { title, notebookID, sectionID } = req.body;
 
     if (!title) {
       return res.status(400).json(responseService.createResponse({
@@ -23,7 +24,6 @@ exports.createPage = async (req, res) => {
       }));
     }
 
-    // check if notebook exists
     const notebook = await Notebook.findById(notebookID);
     if (!notebook) {
       return res.status(404).json(responseService.createResponse({
@@ -33,7 +33,6 @@ exports.createPage = async (req, res) => {
       }));
     }
 
-    // check if section exists if sectionID is provided
     if (sectionID) {
       const section = await Section.findById(sectionID);
       if (!section) {
@@ -44,15 +43,12 @@ exports.createPage = async (req, res) => {
         }));
       }
     }
-
-    // create a new page with a unique name
+    
     const newTitle = await generateUniquePageTitle(notebookID, sectionID || null, title);
-
     const data = await Page.create({
       title: newTitle,
-      content,
-      notebookID,
-      sectionID
+      notebookID: notebookID,
+      sectionID: sectionID || null,
     });
 
     return res.status(201).json(responseService.createResponse({

@@ -24,6 +24,7 @@ const WebRoutes = () => {
         <Route path="notebooks">
           <Route path="" element={<Notebooks />} />
           <Route path=":notebookId" element={<Notebook />} />
+          <Route path=":notebookId/page/:pageId" element={<Notebook />} />
         </Route>
       </Route>
 

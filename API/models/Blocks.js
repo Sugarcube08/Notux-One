@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const BlockSchema = new mongoose.Schema({
     pageId: { type: mongoose.Schema.Types.ObjectId, ref: 'Page', required: true, },
-    type: { type: String, enum: ['text', 'code', 'image', 'todo'], default: 'text', },
     position: { x: { type: Number, required: true }, y: { type: Number, required: true }, width: { type: Number, required: true }, height: { type: Number, required: true }, zIndex: { type: Number, default: 1 }, },
     content: { type: mongoose.Schema.Types.Mixed, default: {}, },
     createdAt: { type: Date, default: Date.now, },

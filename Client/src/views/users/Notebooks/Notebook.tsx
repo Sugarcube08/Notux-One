@@ -29,6 +29,7 @@ import { Label } from "../../../components/ui/label";
 import { toast } from 'sonner';
 import { cn } from "../../../lib/utils";
 import Editor from "./Editor";
+import { useNavigate, useParams } from "react-router-dom";
 
 
 interface Page {
@@ -80,13 +81,13 @@ const Notebook = () => {
   const [deletingSection, setDeletingSection] = useState<string | null>(null);
   const [editingPage, setEditingPage] = useState<{ id: string, name: string } | null>(null);
   const [deletingPage, setDeletingPage] = useState<string | null>(null);
-
+  const navigate = useNavigate();
+  const { notebookId: notebookIdParam, pageId: routePageId } = useParams<{ notebookId: string; pageId?: string }>();
+  const notebookId = notebookIdParam ?? '';
   // Define types for our combined view items
   type PageItem = Page & { type: 'page'; sectionId?: string };
   type SectionItem = Section & { type: 'section' };
   type CombinedItem = PageItem | SectionItem;
-
-  const notebookId = window.location.pathname.split('/').pop() || '';
 
   const handleRenameSection = async (e: React.FormEvent, sectionId: string) => {
     e.preventDefault();
@@ -182,7 +183,7 @@ const Notebook = () => {
           ...response.data.notebook,
           sections: (response.data.notebook.sections || []).map((section: Section) => ({
             ...section,
-            isExpanded: false,
+            isExpanded: (section.pages || []).some((page) => page._id === routePageId) || false,
             pages: section.pages || []
           }))
         };
@@ -227,8 +228,6 @@ const Notebook = () => {
         });
         setNewSectionName("");
         toast.success('Section created successfully');
-
-        // Close the dialog and dropdown
         const dialogClose = document.querySelector('[data-close-dialog]');
         if (dialogClose) (dialogClose as HTMLElement).click();
         setIsDropdownOpen(false);
@@ -271,7 +270,6 @@ const Notebook = () => {
               )
             };
           } else {
-            // Add to direct pages
             return {
               ...prev,
               directPages: [...prev.directPages, newPage].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
@@ -310,12 +308,38 @@ const Notebook = () => {
 
   const handlePageClick = (e: React.MouseEvent, pageId: string) => {
     e.stopPropagation();
-    setActivePage(prevId => prevId === pageId ? '' : pageId);
+    navigate(`/user/notebooks/${notebookId}/page/${pageId}`);
+    setActivePage(pageId);
   };
 
   const toggleSidebarCollapse = () => {
     setIsSidebarCollapsed(prev => !prev);
   };
+
+  useEffect(() => {
+    if (routePageId) {
+      setActivePage(routePageId);
+      setNotebook(prev => {
+        if (!prev) return prev;
+        const sectionToExpand = prev.sections.find(section =>
+          (section.pages || []).some(page => page._id === routePageId)
+        );
+
+        if (!sectionToExpand || sectionToExpand.isExpanded) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          sections: prev.sections.map(section =>
+            section._id === sectionToExpand._id ? { ...section, isExpanded: true } : section
+          )
+        };
+      });
+    } else {
+      setActivePage('');
+    }
+  }, [routePageId]);
 
   useEffect(() => {
     if (notebookId) {

@@ -27,7 +27,11 @@ router.put('/:notebookId/page/:pageId', pageController.updatePage);
 
 router.delete('/:notebookId/page/:pageId', pageController.deletePage);
 
+router.get('/:notebookId/page/:pageId', blockController.getBlocks);
+
 router.post('/:notebookId/page/:pageId/block', blockController.createBlock);
+
+router.put('/:notebookId/page/:pageId/blocks', blockController.bulkUpdateBlocks);
 
 router.put('/:notebookId/page/:pageId/block/:blockId', blockController.updateBlock);
 
