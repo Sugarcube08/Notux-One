@@ -2,7 +2,7 @@
 
 **Notux One** is a full-stack notes workspace that couples a secure Express.js API with a modern React + Vite frontend. It gives authenticated users notebooks, sections, and freeform A4 pages with draggable rich-text blocks, wrapped in a glassmorphism-inspired theme.
 
-Repository: [Sugarcube08/LoginPageUsingReact-N-ExpressAPI](https://github.com/Sugarcube08/LoginPageUsingReact-N-ExpressAPI)
+Repository: [Sugarcube08/Notux-One](https://github.com/Sugarcube08/Notux-One)
 
 ---
 
