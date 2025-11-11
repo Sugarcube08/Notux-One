@@ -37,10 +37,6 @@ const Home = () => {
 
       <div className="relative mx-auto grid w-full max-w-5xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6 text-slate-100">
-          <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-400/10 px-4 py-1 text-xs font-medium uppercase tracking-wide text-emerald-200">
-            Authentication Suite
-          </span>
-
           <div className="space-y-4">
             <h1 className="text-3xl font-semibold text-white sm:text-[2.3rem]">
               Welcome to Notux One — your spatial notebook hub
